@@ -59,6 +59,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.ToggleButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,11 +88,12 @@ public class Camera2BasicFragment extends Fragment
   private static final String HANDLE_THREAD_NAME = "CameraBackground";
 
   private static final int PERMISSIONS_REQUEST_CODE = 1;
+private ProgressBar progressBar;
 
   private final Object lock = new Object();
   private boolean runClassifier = false;
   private boolean checkedPermissions = false;
-  private TextView textView,compare,timer;
+  private TextView textView,compare,timer,textView3;
   private ToggleButton toggle;
   private Button start;
   private NumberPicker np;
@@ -232,8 +234,10 @@ public class Camera2BasicFragment extends Fragment
             @Override
             public void run() {
               textView.setText(builder);
-
-                timer.setText(timerv + "  " + "left " + left);
+//progressBar.setProgress((100 - 40 /100)* 100);
+///Log.d("time", String.valueOf(100 - (int) ((double)Integer.parseInt(timerv)/ ((double) 60000) * 100)));
+timer.setText(Integer.toString(left));
+textView3.setText(timerv);
 
             }
           });
@@ -314,7 +318,9 @@ public class Camera2BasicFragment extends Fragment
   public void onViewCreated(final View view, Bundle savedInstanceState) {
     textureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     textView = (TextView) view.findViewById(R.id.text);
+    textView3=(TextView)view.findViewById(R.id.textView3);
     timer=view.findViewById(R.id.timer);
+    progressBar=view.findViewById(R.id.progressBar);
    // timer.setVisibility(view.GONE);
     //start=view.findViewById(R.id.start);
     toggle = (ToggleButton) view.findViewById(R.id.button);
