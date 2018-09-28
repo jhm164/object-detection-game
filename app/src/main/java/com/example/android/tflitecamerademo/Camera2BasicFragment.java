@@ -42,6 +42,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -93,7 +94,8 @@ private ProgressBar progressBar;
   private final Object lock = new Object();
   private boolean runClassifier = false;
   private boolean checkedPermissions = false;
-  private TextView textView,compare,timer,textView3;
+  public int hit1=0,fail1=0;
+  private TextView textView,compare,timer,textView3,fail,hit;
   private ToggleButton toggle;
   private Button start;
   private NumberPicker np;
@@ -238,7 +240,8 @@ private ProgressBar progressBar;
 ///Log.d("time", String.valueOf(100 - (int) ((double)Integer.parseInt(timerv)/ ((double) 60000) * 100)));
 timer.setText(Integer.toString(left));
 textView3.setText(timerv);
-
+hit.setText(Integer.toString(hit1));
+              fail.setText(Integer.toString(fail1));
             }
           });
     }
@@ -319,6 +322,8 @@ textView3.setText(timerv);
     textureView = (AutoFitTextureView) view.findViewById(R.id.texture);
     textView = (TextView) view.findViewById(R.id.text);
     textView3=(TextView)view.findViewById(R.id.textView3);
+    fail=view.findViewById(R.id.fail);
+    hit =view.findViewById(R.id.hit);
     timer=view.findViewById(R.id.timer);
     progressBar=view.findViewById(R.id.progressBar);
    // timer.setVisibility(view.GONE);
@@ -344,6 +349,7 @@ textView3.setText(timerv);
       @Override
       public void onClick(View v) {
         starttimer();
+        start.setVisibility(v.INVISIBLE);
       //  start.setVisibility(v.VISIBLE);
         chances=chances+1;
         left=11-chances;
@@ -356,7 +362,7 @@ textView3.setText(timerv);
 
     np = (NumberPicker) view.findViewById(R.id.np);
     np.setMinValue(1);
-    np.setVisibility(view.INVISIBLE);
+    np.setVisibility(view.GONE);
     np.setMaxValue(10);
     np.setWrapSelectorWheel(true);
     np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
@@ -370,35 +376,112 @@ textView3.setText(timerv);
 
 
   public void  starttimer(){
-    Timer timer = new Timer();
+   CountDownTimer cd;
+           new CountDownTimer(10000, 300) {
 
-    TimerTask task = new TimerTask(){
+      public void onTick(long millisUntilFinished) {
+    //    mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
+        timerv= String.valueOf(millisUntilFinished / 1000);
+        if(classifier.flag==true) {
+          classifier.flag=false;
+          hit1++;
+          Log.d("hit", String.valueOf(hit));
+
+          start.setVisibility(View.VISIBLE);
+          //this.cancel();
+          timerv= String.valueOf(0);
+          cancel();
+        }
+        classifier.flag=false;
+        //cancel();
+      }
+
+      public void onFinish() {
+        timerv="0";
+        fail1=fail1+1;
+          start.setVisibility(View.VISIBLE);
+          classifier.flag=false;
+          cancel();
+       // mTextField.setText("done!");
+      }
+
+    }.start();
+
+  /*  final int[] i = {0};
+    Timer timer = new Timer();
+    timer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        if (i[0]<10&&classifier.flag==false) {
+          timerv= String.valueOf(i[0]);
+
+          i[0]++;
+        }else if (i[0]<10&&classifier.flag==true) {
+hit1=hit1+1;
+classifier.flag=false;
+        timer.cancel();
+        }else if (i[0]>=10&&classifier.flag==false){
+fail1=fail1+1;
+          timer.cancel();
+        }
+      }
+    }, 1000);
+    */
+/*
+   TimerTask task = null;
+    task= new TimerTask(){
       private int i = 0;
+
       public void run(){
         if (i < 10&&classifier.flag==false) {
          thisflag=false;
          timerv= String.valueOf(i);
          Log.d("insite timer","timer"+i);
          i++;
-        }else {
+        }else if (i < 10&&classifier.flag==true){
           timerv= String.valueOf(0);
           saved_time = 10 - i;
-          classifier.flag=true;
+          hit1=hit1+1;
 
           Log.d("chances", String.valueOf(chances));
+        //  i = 0;
+          thisflag = true;
+         // task.cancel();
+          classifier.flag=false;
+
+        }else if (i>=10&&classifier.flag==false){
+          fail1=fail1+1;
+          thisflag=true;
+         // i=0;
+          classifier.flag=false;
+
+        }
+/*
+        if(i>=10){
+
 
           i = 0;
-          thisflag = true;
+        //  thisflag = true;
+          classifier.flag=true;
         }
-      }
+*/
+/*
+
+      },
+              10000
+
 
     };
 
     timer.scheduleAtFixedRate(task, 0, 1000);
-if (saved_time>0||thisflag==true){
+if (saved_time>0&&thisflag==true){
   task.cancel();
+  //hit1=hit1+1;
+  saved_time=0;
+  thisflag=false;
   classifier.flag=false;
 }
+*/
   }
 
 

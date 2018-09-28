@@ -51,6 +51,7 @@ public abstract class ImageClassifier {
   private static final int SMALL_COLOR = 0xffddaa88;
 public String s1;
 public Boolean flag=false;
+public int hit1,fail1;
   /** Tag for the {@link Log}. */
   private static final String TAG = "TfLiteCameraDemo";
 
@@ -69,7 +70,7 @@ public Boolean flag=false;
   protected Interpreter tflite;
 
   /** Labels corresponding to the output of the vision model. */
-  private List<String> labelList;
+  private List<String> labelList,mylist;
 
   /** A ByteBuffer to hold image data, to be feed into Tensorflow Lite as inputs. */
   protected ByteBuffer imgData = null;
@@ -108,6 +109,7 @@ public Boolean flag=false;
 
 
   public String random(){
+
     s1=labelList.get(new Random().nextInt(labelList.size()));
     Log.d("random",s1);
     return s1;
@@ -226,9 +228,11 @@ public Boolean flag=false;
   public void compare(String s){
    Log.d("detected",s);
     if(s.equals("laptop")){
-
+hit1=hit1+1;
       flag=true;
       Log.d("detected","detected");
+    }else{
+
     }
 
   }
