@@ -19,14 +19,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.view.View;
+import android.widget.ImageView;
 
 /** Main {@code Activity} class for the Camera app. */
 public class CameraActivity extends Activity {
   protected PowerManager.WakeLock mWakeLock;
+  public ImageView pass,fail;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_camera);
+    //pass=(ImageView) findViewById(R.id.pass);
+    //fail=findViewById(R.id.fail);
+    //pass.setVisibility(View.INVISIBLE);
+    //fail.setVisibility(View.INVISIBLE);
     final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
     this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
     this.mWakeLock.acquire();

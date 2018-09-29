@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 public class main extends Activity {
 private TextView textView;
-private ImageView imageView;
+private ImageView imageView2;
 private int mShortAnimationDuration;
 CameraActivity cameraActivity;
 
@@ -25,7 +25,8 @@ CameraActivity cameraActivity;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("main","i am in");
-        textView=findViewById(R.id.textView);
+        imageView2=findViewById(R.id.imageView2);
+       // textView=findViewById(R.id.textView);
 //        imageView=findViewById(R.id.imageView);
       //  imageView.setVisibility(imageView.GONE);
         mShortAnimationDuration = getResources().getInteger(
@@ -35,13 +36,14 @@ CameraActivity cameraActivity;
     }
 
     public  void  crossfade(){
-        ObjectAnimator animatex=new ObjectAnimator().ofFloat(textView,"x",280f);
-        animatex.setDuration(1000);
-        ObjectAnimator fade=new ObjectAnimator().ofFloat(textView,View.ALPHA,0.0f,1.0f);
+      //  ObjectAnimator animatex=new ObjectAnimator().ofFloat(imageView2,"x",280f);
+        //animatex.setDuration(1000);
+        ObjectAnimator fade=new ObjectAnimator().ofFloat(imageView2,View.ALPHA,0.0f,1.0f);
         fade.setDuration(1300);
-
+ObjectAnimator zoomy=new ObjectAnimator().ofFloat(imageView2,"scaleY",1.7f).setDuration(1100);
+      ObjectAnimator zoomx=new ObjectAnimator().ofFloat(imageView2,"scaleX",2.2f).setDuration(1500);
         AnimatorSet animatorSet=new AnimatorSet();
-        animatorSet.playTogether(animatex,fade);
+        animatorSet.playTogether(zoomy,fade,zoomx);
         animatorSet.start();
 
         animatorSet.addListener(new Animator.AnimatorListener() {

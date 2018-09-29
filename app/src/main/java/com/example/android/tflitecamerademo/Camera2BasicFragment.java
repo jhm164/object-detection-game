@@ -15,6 +15,8 @@ limitations under the License.
 
 package com.example.android.tflitecamerademo;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -26,11 +28,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Icon;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -59,6 +63,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.ToggleButton;
@@ -75,6 +80,8 @@ import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import static android.graphics.Color.GREEN;
+
 /** Basic fragments for the Camera. */
 public class Camera2BasicFragment extends Fragment
     implements FragmentCompat.OnRequestPermissionsResultCallback {
@@ -90,13 +97,14 @@ public class Camera2BasicFragment extends Fragment
 
   private static final int PERMISSIONS_REQUEST_CODE = 1;
 private ProgressBar progressBar;
-
+  CameraActivity c=new CameraActivity();
   private final Object lock = new Object();
   private boolean runClassifier = false;
   private boolean checkedPermissions = false;
   public int hit1=0,fail1=0;
-  private TextView textView,compare,timer,textView3,fail,hit;
+  private TextView textView,compare,timer,textView3,fail,hit,message;
   private ToggleButton toggle;
+  private ImageView imageView,imageView3;
   private Button start;
   private NumberPicker np;
   private ImageClassifier classifier;
@@ -242,6 +250,7 @@ timer.setText(Integer.toString(left));
 textView3.setText(timerv);
 hit.setText(Integer.toString(hit1));
               fail.setText(Integer.toString(fail1));
+
             }
           });
     }
@@ -326,6 +335,13 @@ hit.setText(Integer.toString(hit1));
     hit =view.findViewById(R.id.hit);
     timer=view.findViewById(R.id.timer);
     progressBar=view.findViewById(R.id.progressBar);
+    //imageView=view.findViewById(R.id.imageView);
+    //imageView3=view.findViewById(R.id.imageView3);
+message=view.findViewById(R.id.message);
+
+
+   // imageView.setVisibility(view.INVISIBLE);
+    //imageView3.setVisibility(view.INVISIBLE);
    // timer.setVisibility(view.GONE);
     //start=view.findViewById(R.id.start);
     toggle = (ToggleButton) view.findViewById(R.id.button);
@@ -342,12 +358,14 @@ hit.setText(Integer.toString(hit1));
       public void onClick(View v) {
         compare.setText(classifier.random());
       }
+
     });
 
     start=(Button) view.findViewById(R.id.start);
     start.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+          message.setText("");
         starttimer();
         start.setVisibility(v.INVISIBLE);
       //  start.setVisibility(v.VISIBLE);
@@ -386,9 +404,15 @@ hit.setText(Integer.toString(hit1));
           classifier.flag=false;
           hit1++;
           Log.d("hit", String.valueOf(hit));
-
+message.setText("PASS");
+          ObjectAnimator ob=new ObjectAnimator().ofFloat(message,View.ALPHA,0.0f,1.0f).setDuration(1000);
+          AnimatorSet animatorSet=new AnimatorSet();
+          animatorSet.playTogether(ob);
+          animatorSet.start();
+          message.setTextColor(GREEN);
           start.setVisibility(View.VISIBLE);
           //this.cancel();
+
           timerv= String.valueOf(0);
           cancel();
         }
@@ -401,7 +425,14 @@ hit.setText(Integer.toString(hit1));
         fail1=fail1+1;
           start.setVisibility(View.VISIBLE);
           classifier.flag=false;
+        message.setText("FAIL");
+        message.setTextColor(Color.RED);
+        ObjectAnimator ob=new ObjectAnimator().ofFloat(message,View.ALPHA,0.0f,1.0f).setDuration(1000);
+        AnimatorSet animatorSet=new AnimatorSet();
+        animatorSet.playTogether(ob);
+        animatorSet.start();
           cancel();
+
        // mTextField.setText("done!");
       }
 
